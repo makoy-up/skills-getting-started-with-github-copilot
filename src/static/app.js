@@ -2,7 +2,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const activitiesList = document.getElementById("activities-list");
   const activitySelect = document.getElementById("activity");
   const signupForm = document.getElementById("signup-form");
-  const messageDiv = document.getElementById("message");
+  const message = document.getElementById("message");
+  const toast = document.getElementById("toast");
 
   // Function to fetch activities from API
   async function fetchActivities() {
@@ -12,6 +13,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Clear loading message
       activitiesList.innerHTML = "";
+
+      // Clear and reset select options
+      activitySelect.innerHTML = '<option value="">-- Select an activity --</option>';
 
       // Populate activities list
       Object.entries(activities).forEach(([name, details]) => {
@@ -94,22 +98,21 @@ document.addEventListener("DOMContentLoaded", () => {
       const result = await response.json();
 
       if (response.ok) {
-        messageDiv.textContent = result.message;
-        messageDiv.className = "success";
+        toast.innerHTML = result.message;
+        toast.className = "toast success show";
         fetchActivities();
       } else {
-        messageDiv.textContent = result.detail || "An error occurred";
-        messageDiv.className = "error";
+        toast.innerHTML = result.detail || "An error occurred";
+        toast.className = "toast error show";
       }
 
-      messageDiv.classList.remove("hidden");
       setTimeout(() => {
-        messageDiv.classList.add("hidden");
+        toast.classList.remove("show");
+        toast.classList.add("hidden");
       }, 5000);
     } catch (error) {
-      messageDiv.textContent = "Failed to remove participant. Please try again.";
-      messageDiv.className = "error";
-      messageDiv.classList.remove("hidden");
+      toast.textContent = "Failed to remove participant. Please try again.";
+      toast.className = "error show";
       console.error("Error removing participant:", error);
     }
   }
@@ -132,27 +135,25 @@ document.addEventListener("DOMContentLoaded", () => {
       const result = await response.json();
 
       if (response.ok) {
-        messageDiv.textContent = result.message;
-        messageDiv.className = "success";
+        toast.innerHTML = result.message;
+        toast.className = "toast success show";
         signupForm.reset();
 
         // Refresh the activity list so participants update immediately
         await fetchActivities();
       } else {
-        messageDiv.textContent = result.detail || "An error occurred";
-        messageDiv.className = "error";
+        toast.innerHTML = result.detail || "An error occurred";
+        toast.className = "toast error show";
       }
-
-      messageDiv.classList.remove("hidden");
 
       // Hide message after 5 seconds
       setTimeout(() => {
-        messageDiv.classList.add("hidden");
+        toast.classList.remove("show");
+        toast.classList.add("hidden");
       }, 5000);
     } catch (error) {
-      messageDiv.textContent = "Failed to sign up. Please try again.";
-      messageDiv.className = "error";
-      messageDiv.classList.remove("hidden");
+      toast.textContent = "Failed to sign up. Please try again.";
+      toast.className = "toast error show";
       console.error("Error signing up:", error);
     }
   });
